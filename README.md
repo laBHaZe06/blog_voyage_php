@@ -8,6 +8,7 @@ En cour...
 - Ajout, édition et suppression d'articles (pour les utilisateurs authentifiés)
 - Authentification des utilisateurs
 - Gestion des commentaires sur les articles
+- Mise en cache des pages pour améliorer les performances
 
 ## Architecture
 
