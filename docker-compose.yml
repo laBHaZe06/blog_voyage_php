@@ -10,11 +10,13 @@ services:
       MYSQL_ROOT_PASSWORD: root
     ports:
       - "3306:3306"
+    networks:
+      - dev
     volumes:
       - ./mysql:/var/lib/mysql
     
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
+    image: phpmyadmin/phpmyadmin:latest
     container_name: phpmyadmin
     restart: always
     environment:
@@ -24,22 +26,38 @@ services:
       - "8080:80"
     depends_on:
       - database
+    networks:
+      - dev
   
   php:
-    build: ./app
+    build: ./back
     container_name: php_app
     depends_on:
       - database
+      - phpmyadmin
+    networks:
+      - dev
+    volumes:
+      - .:/var/www/
     ports:
       - "8000:8000"
 
   react:
     build: ./client
     container_name: react_app
+    networks:
+      - dev
     ports:
       - "3000:3000"
     depends_on:
       - php
+    volumes:
+     - ./client:/var/www/client
+     - ./client/node_modules:/var/www/client/node_modules
+    
 
+networks:
+  dev:
+    driver: bridge
 volumes:
-  mysql:
+  database:
