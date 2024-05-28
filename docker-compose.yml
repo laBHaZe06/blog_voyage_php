@@ -1,0 +1,45 @@
+version: '3.9'
+
+services:
+  database:
+    image: mysql:5.7
+    container_name: database
+    restart: always
+    environment:
+      MYSQL_DATABASE: blog_voyage
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql:/var/lib/mysql
+    
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: database
+      PMA_PORT: 3306
+    ports:
+      - "8080:80"
+    depends_on:
+      - database
+  
+  php:
+    build: ./app
+    container_name: php_app
+    depends_on:
+      - database
+    ports:
+      - "8000:8000"
+
+  react:
+    build: ./client
+    container_name: react_app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - php
+
+volumes:
+  mysql:
