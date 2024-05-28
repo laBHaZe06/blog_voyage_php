@@ -2,25 +2,44 @@
 
 namespace App\Controllers;
 
-class PostController extends Controller {
 
-    public function index() {
-        $postsData = $this->conn->query("SELECT * FROM posts")->fetchAll();
-        $posts = [];
-        foreach ($postsData as $p) {
-            $posts[] = [
-                'id' => $p['id'],
-                'title' => $p['title'],
-                'content' => $p['content'],
-                'created_at' => $p['created_at']
-            ];
-        }
-        return $posts;
+
+class PostController extends Controller 
+{
+    public function __construct() {
+        parent::__construct();
     }
 
-    public function show($id) {
-        $post = $this->conn->query("SELECT * FROM posts WHERE id = $id")->fetch();
-        return $post;
+    public function index() {
+        $result = $this->conn->query("SELECT * FROM posts");
+        $posts = $result->fetchAll();
+
+        if (empty($posts)) {
+            http_response_code(404);
+            return json_encode(['message' => 'Aucun article trouvé']);
+        }
+
+        $json = json_encode($posts);
+        header('Content-Type: application/json');
+        return $json;
+    }
+
+    public function show($id)
+    {
+        $stmt = $this->conn->prepare("SELECT * FROM posts WHERE id = ?");
+        $stmt->bindParam('i', $id);
+        $stmt->execute();
+        $post = $stmt->fetch();
+        $stmt->closeCursor();
+
+
+        if (!$post) {
+            http_response_code(404);
+            return json_encode(['message' => 'Article non trouvé']);
+        }
+
+        header('Content-Type: application/json');
+        return json_encode($post);
     }
 
     public function create() {

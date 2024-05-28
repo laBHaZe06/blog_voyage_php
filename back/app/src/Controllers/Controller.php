@@ -18,5 +18,7 @@ class Controller {
             echo 'Connexion réussie';
         }
     }
+
+    
 }
 ?>

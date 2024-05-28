@@ -37,4 +37,4 @@ COPY app/public/index.php /var/www/back/app/public/index.php
 RUN a2enmod rewrite remoteip && \
     a2enconf z-app
 
-CMD ["php", "-S", "0.0.0.0:8000", "-t", "/var/www/back/app/public"]
+CMD ["php", "-S", "0.0.0.0:8000", "-t", "back/app/public"]
