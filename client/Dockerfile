@@ -1,6 +1,6 @@
 FROM node:18 as build
 
-WORKDIR /var/www/client
+WORKDIR /var/www/
 
 COPY package.json .
 

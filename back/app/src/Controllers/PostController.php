@@ -2,7 +2,8 @@
 
 namespace App\Controllers;
 
-
+use App\Controllers\Controller;
+use PDO;
 
 class PostController extends Controller 
 {
@@ -13,13 +14,22 @@ class PostController extends Controller
     public function index() {
         $result = $this->conn->query("SELECT * FROM posts");
         $posts = $result->fetchAll();
+        $data = array();
+        foreach ($posts as $p) {
+            $data[] = [
+                'title' => $p['title'],
+                'content' => $p['content'],
+                'created_at' => $p['created_at'],
+                'updated_at' => $p['updated_at'],
+            ];
+        }
 
-        if (empty($posts)) {
+        if (empty($data)) {
             http_response_code(404);
             return json_encode(['message' => 'Aucun article trouvé']);
         }
 
-        $json = json_encode($posts);
+        $json = json_encode($data);
         header('Content-Type: application/json');
         return $json;
     }
@@ -27,11 +37,8 @@ class PostController extends Controller
     public function show($id)
     {
         $stmt = $this->conn->prepare("SELECT * FROM posts WHERE id = ?");
-        $stmt->bindParam('i', $id);
-        $stmt->execute();
-        $post = $stmt->fetch();
-        $stmt->closeCursor();
-
+        $stmt->execute([$id]);
+        $post = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$post) {
             http_response_code(404);
