@@ -14,11 +14,9 @@ class Controller {
         // Vérifier la connexion
         if ($this->conn === null) {
             die("Erreur de connexion à la base de données. Veuillez vérifier vos configurations.");
-        } else {
-            echo 'Connexion réussie';
-        }
+        } 
     }
 
-    
+
 }
 ?>
