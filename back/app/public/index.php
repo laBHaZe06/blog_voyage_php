@@ -6,17 +6,17 @@ require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../src/Router/Route.php';
 
 // Routes 
-Route::add('/', 'GET', function () {
+Route::get('/', function () {
     $controller = new \App\Controllers\HomeController();
     echo $controller->index();
 });
 
-Route::add('/posts', 'GET', function () {
+Route::get('/posts', function () {
     $controller = new \App\Controllers\PostController();
     echo $controller->index();
 });
 
-Route::add('/posts/:id', 'GET', function () {
+Route::get('/posts/:id', function () {
     $controller = new \App\Controllers\PostController();
     echo $controller->show($_GET['id']);
 });
