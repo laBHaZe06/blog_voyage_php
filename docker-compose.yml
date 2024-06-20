@@ -42,6 +42,9 @@ services:
     ports:
       - "8000:8000"
 
+  # maildev:
+    
+
   react:
     build: ./client
     container_name: react_app
@@ -52,7 +55,7 @@ services:
     depends_on:
       - php
     volumes:
-     - ./client:/var/www/client
+     - ./client:/var/www/
      - ./client/node_modules:/var/www/client/node_modules
     
 

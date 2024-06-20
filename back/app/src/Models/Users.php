@@ -57,28 +57,41 @@ class Users
     public function create($username, $password, $email)
     {
         try{
-            $passwordHash = password_hash($password, PASSWORD_BCRYPT);
-            $stmt = $this->conn->prepare("INSERT INTO users (username, password, email) VALUES (?, ?, ?)");
-            return $stmt->execute([$username, $passwordHash, $email]);
+            $stmt = $this->conn->prepare("SELECT * FROM users WHERE email = ? ");
+            $stmt->execute([$email]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($user) {
+                return "User already exists";
+            } else {
+                $stmt = $this->conn->prepare("INSERT INTO users (username, password, email) VALUES (?, ?, ?)");
+                $passwordHash = password_hash($password, PASSWORD_BCRYPT);
+                return $stmt->execute([$username, $passwordHash, $email]);
+            }
+
         } catch (PDOException $e) {
             return $e->getMessage();
         }
     }
 
-    public function findByEmail($email)
+    public function findEmail($email)
     {
         $stmt = $this->conn->prepare("SELECT * FROM users WHERE email = ?");
-        $stmt->execute([$email]);
+        $stmt->execute($email);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public function verifyPassword($email, $password)
     {
-        $user = $this->findByEmail($this->conn, $email);
+        $user = $this->findEmail($this->conn, $email);
         if ($user && password_verify($password, $user['password'])) 
             return $user;
+        else 
+            
 
         return false;
     }
+    
 }
+
 ?>

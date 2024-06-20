@@ -1,9 +1,11 @@
 <?php
 namespace App\Controllers;
-use App\Controllers\Controller;
+require_once __DIR__ ."/function/function.php";
 
+use App\Controllers\Controller;
 use App\Models\Users;
 use App\Database\Connection;
+use Exception;
 
 class LoginController extends Controller
 {
@@ -17,18 +19,21 @@ class LoginController extends Controller
 
     public function login()
     {
-        $data = json_decode(file_get_contents('php://input'), true);
-        $email = $data['email'] ?? '';
-        $password = $data['password'] ?? '';
 
-        $user = $this->userModel->verifyPassword($this->conn,$email, $password);
-        if ($user) {
-            // Génération d'un token simple pour l'exemple (en production, utilisez JWT ou une autre méthode sécurisée)
-            $token = bin2hex(random_bytes(16));
+        try{
+            $data = json_decode(file_get_contents('php://input'), true);
+            $email = $data['email'] ?? '';
+            $password = $data['password'] ?? '';
+
+            if(!empty($email) && !empty($password) && $email != '' && $password != '' )
+                
+                $this->userModel->verifyPassword($email, $password);
+            else 
+                echo json_encode(['message' => 'Tous les champs sont requis']);
             
-            echo json_encode(['message' => 'Login successful', 'token' => $token]);
-        } else {
-            echo json_encode(['message' => 'Invalid credentials']);
+
+        } catch(Exception $e){
+            echo json_encode(['message' => 'Une erreur est survenue :'. $e->getMessage()]);
         }
     }
 }
